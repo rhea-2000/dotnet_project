@@ -31,7 +31,3 @@ jobs:
           dotnet build
           dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
           dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
-      - name: Publish coverage report to SonarCloud
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
