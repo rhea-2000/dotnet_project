@@ -18,9 +18,9 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0 
-      - name: Run tests and generate coverage report for Dotnet
+      - name: Run Dotnet Test
         run: dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
-      - name: Install SonarScanner
+      - name: Install SonarScanner for Dotnet
         run: dotnet tool install --global dotnet-sonarscanner
       - name: Sonarqube Analysis
         env:
