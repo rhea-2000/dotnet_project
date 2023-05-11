@@ -18,7 +18,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: 11
-          distribution: 'zulu' # Alternative distribution options are available
+          distribution: 'zulu' 
       - name: Build Dotnet
         run: dotnet build
       - name: Run Test 
