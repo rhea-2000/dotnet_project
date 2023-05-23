@@ -34,3 +34,5 @@ jobs:
           dotnet build
           dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
           dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+      - name: Dotnet Publish
+        run: dotnet publish --configuration Release --output ./publish
