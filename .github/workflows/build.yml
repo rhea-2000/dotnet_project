@@ -23,14 +23,24 @@ jobs:
         run: dotnet build
       - name: Run Test 
         run: dotnet test 
-      - name: Install .NET SDK
+      - name: Cache SonarQube packages
+        uses: actions/cache@v1
+        with:
+          path: ~\sonar\cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+      - name: Cache SonarQube scanner
+        id: cache-sonar-scanner
+        uses: actions/cache@v1
+        with:
+          path: .\.sonar\scanner
+          key: ${{ runner.os }}-sonar-scanner
+          restore-keys: ${{ runner.os }}-sonar-scanner
+      - name: Install SonarQube scanner
+        if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
         run: |
-         wget -O dotnet-install.sh https://dot.net/v1/dotnet-install.sh
-         chmod +x dotnet-install.sh
-         ./dotnet-install.sh --install-dir /usr/share/dotnet --channel LTS
-         export PATH="$PATH:/usr/share/dotnet"
-      - name: Install SonarScanner
-        run: dotnet tool install --global dotnet-sonarscanner
+          New-Item -Path .\.sonar\scanner -ItemType Directory
+          dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
       - name: SonarCloud Analysis
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
