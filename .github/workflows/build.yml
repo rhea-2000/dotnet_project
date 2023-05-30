@@ -23,8 +23,21 @@ jobs:
         run: dotnet build
       - name: Run Test 
         run: dotnet test 
-      - name: Install SonarScanner
-        run: dotnet tool install --global dotnet-sonarscanner
+      - name: Check if SonarScanner is installed
+        id: check_sonarscanner
+        run: |
+          if command -v dotnet-sonarscanner >/dev/null 2>&1; then
+            echo "::set-output name=installed::true"
+          else
+            echo "::set-output name=installed::false"
+          fi
+      - name: Install or update SonarScanner
+        run: |
+          if [[ "${{ steps.check_sonarscanner.outputs.installed }}" == "true" ]]; then
+            dotnet tool update --global dotnet-sonarscanner
+          else
+            dotnet tool install --global dotnet-sonarscanner
+          fi
       - name: SonarQube Analysis
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
