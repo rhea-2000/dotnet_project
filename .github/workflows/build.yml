@@ -23,21 +23,24 @@ jobs:
         run: dotnet build
       - name: Run Test 
         run: dotnet test 
-      - name: Check if SonarScanner is installed
-        id: check_sonarscanner
+      - name: Cache SonarQube packages
+        uses: actions/cache@v1
+        with:
+          path: ~\sonar\cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+      - name: Cache SonarQube scanner
+        id: cache-sonar-scanner
+        uses: actions/cache@v1
+        with:
+          path: .\.sonar\scanner
+          key: ${{ runner.os }}-sonar-scanner
+          restore-keys: ${{ runner.os }}-sonar-scanner
+      - name: Install SonarQube scanner
+        if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
         run: |
-          if [ command -v dotnet-sonarscanner >/dev/null 2>&1 ]; then
-            echo "::set-output name=installed::true"
-          else
-            echo "::set-output name=installed::false"
-          fi
-      - name: Install or update SonarScanner
-        run: |
-          if [ "${{ steps.check_sonarscanner.outputs.installed }}" == "true" ]; then
-            dotnet tool update --global dotnet-sonarscanner
-          else
-            dotnet tool install --global dotnet-sonarscanner
-          fi
+          New-Item -Path .\.sonar\scanner -ItemType Directory
+          dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
       - name: SonarQube Analysis
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
