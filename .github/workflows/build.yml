@@ -33,7 +33,7 @@ jobs:
           fi
       - name: Install or update SonarScanner
         run: |
-          if [[ "${{ steps.check_sonarscanner.outputs.installed }}" == "true" ]]; then
+          if [ "${{ steps.check_sonarscanner.outputs.installed }}" == "true" ]; then
             dotnet tool update --global dotnet-sonarscanner
           else
             dotnet tool install --global dotnet-sonarscanner
