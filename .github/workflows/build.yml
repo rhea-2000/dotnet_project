@@ -23,6 +23,8 @@ jobs:
         run: dotnet build
       - name: Run Test 
         run: dotnet test 
+      - name: Install SonarScanner
+        run: dotnet tool install --global dotnet-sonarscanner
       - name: SonarQube Analysis
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
