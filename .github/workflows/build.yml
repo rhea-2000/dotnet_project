@@ -44,7 +44,7 @@ jobs:
       - name: SonarQube Analysis
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_DOTNET_TOKEN }}
         run: |
           .\.sonar\scanner\dotnet-sonarscanner /k:"dotnet_git_integration" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}" /d:sonar.cs.opencover.it.reportsPaths="**/coverage.opencover.xml"
           dotnet build
