@@ -51,7 +51,7 @@ jobs:
           dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_DOTNET_TOKEN }}"
       - name: Dotnet Publish
-        run: dotnet publish --configuration Release --output ./publish SonarTestApi.sln
+        run: dotnet publish --configuration Release --output ./publish 
       - name: List Publish Folder Contents
         run: ls -R ./publish
       - name: Install Veracode Static Analysis CLI
