@@ -1,7 +1,5 @@
 name: SonarQube
 on:
-  repository_dispatch:
-    types: [wait-event]
   push:
     branches:
       - master
