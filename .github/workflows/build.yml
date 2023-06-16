@@ -19,9 +19,42 @@ jobs:
         with:
           java-version: 11
           distribution: 'zulu' 
-      - name: Install dependencies
-        run: npm install	
-      - name: Build React
-        run: npm run build
-      - name: Run Test
-        run: npm run test -- --coverage . --watchAll=false
+      - name: Build Dotnet
+        run: dotnet build
+      - name: Run Test 
+        run: dotnet test 
+      - name: Cache SonarQube packages
+        uses: actions/cache@v1
+        with:
+          path: ~\sonar\cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+      - name: Cache SonarQube scanner
+        id: cache-sonar-scanner
+        uses: actions/cache@v1
+        with:
+          path: .\.sonar\scanner
+          key: ${{ runner.os }}-sonar-scanner
+          restore-keys: ${{ runner.os }}-sonar-scanner
+      - name: Install SonarQube scanner
+        if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
+        run: |
+          New-Item -Path .\.sonar\scanner -ItemType Directory
+          dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
+      - name: SonarQube Analysis
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+          SONAR_TOKEN: ${{ secrets.SONAR_DOTNET_TOKEN }}
+        run: |
+          .\.sonar\scanner\dotnet-sonarscanner /k:"dotnet_git_integration" /d:sonar.login="${{ secrets.SONAR_DOTNET_TOKEN }}" /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}" /d:sonar.cs.opencover.it.reportsPaths="**/coverage.opencover.xml"
+          dotnet build
+          dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_DOTNET_TOKEN }}"
+      - name: Dotnet Publish
+        run: dotnet publish --configuration Release --output ./publish 
+      - name: List Publish Folder Contents
+        run: ls -R ./publish
+      - name: Install Veracode Static Analysis CLI
+        run: |
+          Invoke-WebRequest -Uri https://downloads.veracode.com/securityscan/pipeline-scan-LATEST.zip -OutFile pipeline-scan-LATEST.zip
+          Expand-Archive -Path pipeline-scan-LATEST.zip -DestinationPath pipeline-scan
