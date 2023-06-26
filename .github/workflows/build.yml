@@ -54,7 +54,3 @@ jobs:
         run: dotnet publish --configuration Release --output ./publish 
       - name: List Publish Folder Contents
         run: ls -R ./publish
-      - name: Install Veracode Static Analysis CLI
-        run: |
-          Invoke-WebRequest -Uri https://downloads.veracode.com/securityscan/pipeline-scan-LATEST.zip -OutFile pipeline-scan-LATEST.zip
-          Expand-Archive -Path pipeline-scan-LATEST.zip -DestinationPath pipeline-scan
