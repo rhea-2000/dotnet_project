@@ -2,7 +2,7 @@ name:
   First Cron Job
 on:
   schedule:
-    - cron: '* 8 * * *'
+    - cron: '5 * * * *'
   
 jobs:
   cron:
